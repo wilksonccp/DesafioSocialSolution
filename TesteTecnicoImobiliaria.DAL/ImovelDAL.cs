@@ -51,24 +51,27 @@ namespace TesteTecnicoImobiliaria.DAL
 
         public List<ImovelModel> ListarImoveis()
         {
-            List<ImovelModel> Imovels = new List<ImovelModel>();
+            List<ImovelModel> imovels = new List<ImovelModel>();
             using (var connection = contexto.CreateConnection())
             {
-                Imovels = connection.GetAll<ImovelModel>().ToList();
+                var query = "SELECT I.* FROM IMOVEL AS I " +
+                    " INNER JOIN CLIENTE AS C ON I.CD_CLIENTE = C.CD_CLIENTE" +
+                    " WHERE C.FL_ATIVO = @clienteAtivo";
+                imovels = connection.Query<ImovelModel>(query, new { clienteAtivo = true }).ToList();
             }
 
-            return Imovels;
+            return imovels;
         }
 
         public ImovelModel SelecionarImovel(int id)
         {
-            ImovelModel Imovel;
+            ImovelModel imovel;
             using (var connection = contexto.CreateConnection())
             {
-                Imovel = connection.Get<ImovelModel>(id);
+                imovel = connection.Get<ImovelModel>(id);
             }
 
-            return Imovel;
+            return imovel;
         }
     }
 }
