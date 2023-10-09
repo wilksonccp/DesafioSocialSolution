@@ -6,69 +6,69 @@ using TesteTecnicoImobiliaria.Modelo.Models;
 
 namespace TesteTecnicoImobiliaria.DAL
 {
-    internal class ClienteDAL : IClienteDAL
+    internal class ImovelDAL : IImovelDAL
     {
         private readonly IContextDAL contexto;
 
-        public ClienteDAL(IContextDAL contexto)
+        public ImovelDAL(IContextDAL contexto)
         {
             this.contexto = contexto;
         }
 
-        public void AtualizarCliente(ClienteModel cliente)
+        public void AtualizarImovel(ImovelModel Imovel)
         {
             using (var connection = contexto.CreateConnection())
             {
-                connection.Update<ClienteModel>(cliente);
+                connection.Update<ImovelModel>(Imovel);
             }
         }
 
-        public void CadastrarCliente(ClienteModel cliente)
+        public void CadastrarImovel(ImovelModel Imovel)
         {
             using (var connection = contexto.CreateConnection())
             {
-                connection.Insert<ClienteModel>(cliente);
+                connection.Insert<ImovelModel>(Imovel);
             }
         }
 
-        public void AtivarCliente(int id)
+        public void AtivarImovel(int id)
         {
             using (var connection = contexto.CreateConnection())
             {
-                var query = "UPDATE CLIENTE SET FL_ATIVO = 1 WHERE CD_CLIENTE = @id";
+                var query = "UPDATE IMOVEL SET FL_ATIVO = 1 WHERE CD_IMOVEL = @id";
                 connection.Execute(query, new { id });
             }
         }
 
-        public void DesativarCliente(int id)
+        public void DesativarImovel(int id)
         {
             using (var connection = contexto.CreateConnection())
             {
-                var query = "UPDATE CLIENTE SET FL_ATIVO = 0 WHERE CD_CLIENTE = @id";
+                var query = "UPDATE IMOVEL SET FL_ATIVO = 0 WHERE CD_IMOVEL = @id";
                 connection.Execute(query, new { id });
             }
         }
 
-        public List<ClienteModel> ListarClientes()
+        public List<ImovelModel> ListarImoveis()
         {
-            List<ClienteModel> clientes = new List<ClienteModel>();
+            List<ImovelModel> Imovels = new List<ImovelModel>();
             using (var connection = contexto.CreateConnection())
             {
-                clientes = connection.GetAll<ClienteModel>().ToList();
+                Imovels = connection.GetAll<ImovelModel>().ToList();
             }
 
-            return clientes;
+            return Imovels;
         }
 
-        public ClienteModel SelecionarCliente(int id)
+        public ImovelModel SelecionarImovel(int id)
         {
-            ClienteModel cliente;
+            ImovelModel Imovel;
             using (var connection = contexto.CreateConnection())
             {
-                cliente = connection.Get<ClienteModel>(id);
+                Imovel = connection.Get<ImovelModel>(id);
             }
 
-            return cliente;
+            return Imovel;
         }
     }
 }

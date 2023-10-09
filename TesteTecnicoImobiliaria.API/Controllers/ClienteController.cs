@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using TesteTecnicoImobiliaria.Modelo.Interfaces.Regra;
+using TesteTecnicoImobiliaria.Modelo.ViewModels;
 
 namespace TesteTecnicoImobiliaria.API.Controllers
 {
@@ -16,34 +17,39 @@ namespace TesteTecnicoImobiliaria.API.Controllers
 
         // GET: api/<ClienteController>
         [HttpGet]
-        public IEnumerable<string> Get()
+        public IEnumerable<ClienteViewModel> Get()
         {
-            return new string[] { "value1", "value2" };
+            return rnCliente.ListarClientes();
         }
 
         // GET api/<ClienteController>/5
         [HttpGet("{id}")]
-        public string Get(int id)
+        public ClienteViewModel Get(int id)
         {
-            return "value";
+            return rnCliente.SelecionarCliente(id);
         }
 
         // POST api/<ClienteController>
         [HttpPost]
-        public void Post([FromBody] string value)
+        public void Post([FromBody] ClienteViewModel cliente)
         {
+            rnCliente.SalvarCliente(cliente);
         }
 
-        // PUT api/<ClienteController>/5
-        [HttpPut("{id}")]
-        public void Put(int id, [FromBody] string value)
+        // POST api/<ClienteController>/Ativar/5
+        [HttpPost]
+        [Route("Ativar/{id}")]
+        public void AtivarCliente(int id)
         {
+            rnCliente.AtivarCliente(id);
         }
 
-        // DELETE api/<ClienteController>/5
-        [HttpDelete("{id}")]
-        public void Delete(int id)
+        // POST api/<ClienteController>/Desativar/5
+        [HttpPost]
+        [Route("Desativar/{id}")]
+        public void DesativarCliente(int id)
         {
+            rnCliente.DesativarCliente(id);
         }
     }
 }

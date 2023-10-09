@@ -11,6 +11,7 @@ namespace TesteTecnicoImobiliaria.DAL.IoC
 
             dic.Add(typeof(IContextDAL), typeof(ContextDAL));
             dic.Add(typeof(IClienteDAL), typeof(ClienteDAL));
+            dic.Add(typeof(IImovelDAL), typeof(ImovelDAL));
 
             return dic;
         }
