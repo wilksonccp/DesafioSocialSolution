@@ -6,7 +6,7 @@ namespace TesteTecnicoImobiliaria.Modelo.Interfaces
     {
         void CadastrarCliente(ClienteModel cliente);
         void AtualizarCliente(ClienteModel cliente);
-        List<ClienteModel> ListarClientes();
+        List<ClienteModel> ListarClientes(string? nome = null, string? cpf = null, string? cnpj = null, string? email = null);
         void DesativarCliente(int id);
         void AtivarCliente(int id);
         ClienteModel SelecionarCliente(int id);

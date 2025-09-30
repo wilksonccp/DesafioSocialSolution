@@ -58,15 +58,27 @@ namespace TesteTecnicoImobiliaria.DAL
             }
         }
 
-        public List<ClienteModel> ListarClientes()
+        public List<ClienteModel> ListarClientes(string? nome = null, string? cpf = null, string? cnpj = null, string? email = null)
         {
-            List<ClienteModel> clientes = new List<ClienteModel>();
             using (var connection = contexto.CreateConnection())
             {
-                clientes = connection.GetAll<ClienteModel>().ToList();
-            }
+                const string query = @"SELECT *
+                                       FROM CLIENTE
+                                       WHERE (@nome IS NULL OR UPPER(NM_CLIENTE) LIKE '%' + UPPER(@nome) + '%')
+                                         AND (@cpf IS NULL OR NR_CPF = @cpf)
+                                         AND (@cnpj IS NULL OR NR_CNPJ = @cnpj)
+                                         AND (@email IS NULL OR UPPER(DS_EMAIL) LIKE '%' + UPPER(@email) + '%')";
 
-            return clientes;
+                var parametros = new
+                {
+                    nome = string.IsNullOrWhiteSpace(nome) ? null : nome.Trim(),
+                    cpf,
+                    cnpj,
+                    email = string.IsNullOrWhiteSpace(email) ? null : email.Trim()
+                };
+
+                return connection.Query<ClienteModel>(query, parametros).ToList();
+            }
         }
 
         public ClienteModel SelecionarCliente(int id)

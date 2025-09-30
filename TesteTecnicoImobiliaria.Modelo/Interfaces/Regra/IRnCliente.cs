@@ -6,7 +6,7 @@ namespace TesteTecnicoImobiliaria.Modelo.Interfaces.Regra
     {
         ClienteViewModel SelecionarCliente(int id);
         void SalvarCliente(ClienteViewModel cliente);
-        List<ClienteViewModel> ListarClientes();
+        List<ClienteViewModel> ListarClientes(string? nome = null, string? cpf = null, string? cnpj = null, string? email = null);
         void DesativarCliente(int id);
         void AtivarCliente(int id);
     }

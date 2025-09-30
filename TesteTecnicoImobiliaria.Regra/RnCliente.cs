@@ -36,13 +36,15 @@ namespace TesteTecnicoImobiliaria.Regra
             clienteDAL.DesativarCliente(id);
         }
 
-        public List<ClienteViewModel> ListarClientes()
+        public List<ClienteViewModel> ListarClientes(string? nome = null, string? cpf = null, string? cnpj = null, string? email = null)
         {
-            var retorno = new List<ClienteViewModel>();
-            var clientes = clienteDAL.ListarClientes();
-            retorno = mapper.Map<List<ClienteViewModel>>(clientes);
+            var nomeFiltrado = string.IsNullOrWhiteSpace(nome) ? null : nome.Trim();
+            var emailFiltrado = string.IsNullOrWhiteSpace(email) ? null : email.Trim();
+            var cpfLimpo = cpf.LimparMascara();
+            var cnpjLimpo = cnpj.LimparMascara();
 
-            return retorno;
+            var clientes = clienteDAL.ListarClientes(nomeFiltrado, cpfLimpo, cnpjLimpo, emailFiltrado);
+            return mapper.Map<List<ClienteViewModel>>(clientes);
         }
 
         public void SalvarCliente(ClienteViewModel cliente)

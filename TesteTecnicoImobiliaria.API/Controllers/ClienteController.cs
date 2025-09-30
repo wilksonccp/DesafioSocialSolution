@@ -17,9 +17,9 @@ namespace TesteTecnicoImobiliaria.API.Controllers
 
         // GET: api/<ClienteController>
         [HttpGet]
-        public IEnumerable<ClienteViewModel> Get()
+        public IEnumerable<ClienteViewModel> Get([FromQuery] string? nome = null, [FromQuery] string? cpf = null, [FromQuery] string? cnpj = null, [FromQuery] string? email = null)
         {
-            return rnCliente.ListarClientes();
+            return rnCliente.ListarClientes(nome, cpf, cnpj, email);
         }
 
         // GET api/<ClienteController>/5
