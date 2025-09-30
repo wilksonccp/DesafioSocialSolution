@@ -11,11 +11,13 @@ namespace TesteTecnicoImobiliaria.Regra
     {
         private readonly IMapper mapper;
         private readonly IClienteDAL clienteDAL;
+        private readonly IImovelDAL imovelDAL;
 
-        public RnCliente(IMapper mapper, IClienteDAL clienteDAL)
+        public RnCliente(IMapper mapper, IClienteDAL clienteDAL, IImovelDAL imovelDAL)
         {
             this.mapper = mapper;
             this.clienteDAL = clienteDAL;
+            this.imovelDAL = imovelDAL;
         }
 
         public ClienteViewModel SelecionarCliente(int id)
@@ -33,6 +35,11 @@ namespace TesteTecnicoImobiliaria.Regra
 
         public void DesativarCliente(int id)
         {
+            if (imovelDAL.ClientePossuiImovelAtivo(id))
+            {
+                throw new InvalidOperationException("Cliente possui imovel ativo e nao pode ser desativado.");
+            }
+
             clienteDAL.DesativarCliente(id);
         }
 

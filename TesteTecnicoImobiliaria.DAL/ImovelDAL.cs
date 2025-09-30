@@ -73,5 +73,15 @@ namespace TesteTecnicoImobiliaria.DAL
 
             return imovel;
         }
+
+        public bool ClientePossuiImovelAtivo(int idCliente)
+        {
+            using (var connection = contexto.CreateConnection())
+            {
+                const string query = "SELECT COUNT(1) FROM IMOVEL WHERE CD_CLIENTE = @idCliente AND FL_ATIVO = 1";
+                var quantidade = connection.ExecuteScalar<int>(query, new { idCliente });
+                return quantidade > 0;
+            }
+        }
     }
 }

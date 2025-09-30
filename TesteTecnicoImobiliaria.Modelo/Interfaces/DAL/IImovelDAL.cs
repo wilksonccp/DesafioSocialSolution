@@ -10,5 +10,6 @@ namespace TesteTecnicoImobiliaria.Modelo.Interfaces
         void DesativarImovel(int id);
         void AtivarImovel(int id);
         ImovelModel SelecionarImovel(int id);
+        bool ClientePossuiImovelAtivo(int idCliente);
     }
 }
