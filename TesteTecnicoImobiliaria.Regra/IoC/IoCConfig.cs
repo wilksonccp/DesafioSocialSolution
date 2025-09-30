@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+﻿using System;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace TesteTecnicoImobiliaria.Regra.IoC
 {
@@ -8,6 +9,10 @@ namespace TesteTecnicoImobiliaria.Regra.IoC
         {
             Configure(services, Modulo.GetTypes());
             Configure(services, DAL.IoC.Modulo.GetTypes());
+            services.AddHttpClient<IViaCepService, ViaCepService>(client =>
+            {
+                client.BaseAddress = new Uri("https://viacep.com.br");
+            });
         }
 
         private static void Configure(IServiceCollection services, Dictionary<Type, Type> types)

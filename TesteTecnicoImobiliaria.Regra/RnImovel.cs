@@ -1,5 +1,8 @@
 ﻿using System;
 using System.Globalization;
+using System.Linq;
+using System.Net.Http;
+using System.Threading.Tasks;
 using AutoMapper;
 using TesteTecnicoImobiliaria.Modelo.Interfaces;
 using TesteTecnicoImobiliaria.Modelo.Interfaces.Regra;
@@ -12,11 +15,13 @@ namespace TesteTecnicoImobiliaria.Regra
     {
         private readonly IMapper mapper;
         private readonly IImovelDAL imovelDAL;
+        private readonly IViaCepService viaCepService;
 
-        public RnImovel(IMapper mapper, IImovelDAL imovelDAL)
+        public RnImovel(IMapper mapper, IImovelDAL imovelDAL, IViaCepService viaCepService)
         {
             this.mapper = mapper;
             this.imovelDAL = imovelDAL;
+            this.viaCepService = viaCepService;
         }
 
         public ImovelViewModel SelecionarImovel(int id)
@@ -70,6 +75,7 @@ namespace TesteTecnicoImobiliaria.Regra
         public void SalvarImovel(ImovelViewModel Imovel)
         {
             ValidarImovel(Imovel);
+            PreencherEndereco(Imovel);
 
             ImovelModel ImovelModel = mapper.Map<ImovelModel>(Imovel);
             if (Imovel.Id == 0)
@@ -79,6 +85,46 @@ namespace TesteTecnicoImobiliaria.Regra
             else
             {
                 imovelDAL.AtualizarImovel(ImovelModel);
+            }
+        }
+
+        private void PreencherEndereco(ImovelViewModel imovel)
+        {
+            if (string.IsNullOrWhiteSpace(imovel.Cep))
+            {
+                throw new ArgumentException("Informe o CEP do imovel.");
+            }
+
+            var cepLimpo = imovel.Cep.LimparMascara();
+
+            if (cepLimpo.Length != 8 || !cepLimpo.All(char.IsDigit))
+            {
+                throw new ArgumentException("CEP invalido.");
+            }
+
+            try
+            {
+                var endereco = viaCepService.ObterEnderecoPorCepAsync(cepLimpo).GetAwaiter().GetResult();
+
+                if (endereco == null)
+                {
+                    throw new ArgumentException("CEP nao encontrado.");
+                }
+
+                imovel.Cep = cepLimpo;
+                imovel.Logradouro = endereco.Logradouro ?? string.Empty;
+                imovel.Complemento = endereco.Complemento ?? string.Empty;
+                imovel.Bairro = endereco.Bairro ?? string.Empty;
+                imovel.Localidade = endereco.Localidade ?? string.Empty;
+                imovel.Uf = endereco.Uf ?? string.Empty;
+            }
+            catch (HttpRequestException ex)
+            {
+                throw new InvalidOperationException("Falha ao consultar endereco no ViaCEP.", ex);
+            }
+            catch (TaskCanceledException ex)
+            {
+                throw new InvalidOperationException("Falha ao consultar endereco no ViaCEP.", ex);
             }
         }
 
