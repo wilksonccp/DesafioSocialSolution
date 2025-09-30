@@ -17,9 +17,9 @@ namespace TesteTecnicoImobiliaria.API.Controllers
 
         // GET: api/<ImovelController>
         [HttpGet]
-        public IEnumerable<ImovelViewModel> Get()
+        public IEnumerable<ImovelViewModel> Get([FromQuery] string? valorMaximo = null, [FromQuery] string? dataPublicacao = null, [FromQuery] int? tipoNegocio = null)
         {
-            return rnImovel.ListarImoveis();
+            return rnImovel.ListarImoveis(valorMaximo, dataPublicacao, tipoNegocio);
         }
 
         // GET api/<ImovelController>/5

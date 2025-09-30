@@ -6,7 +6,7 @@ namespace TesteTecnicoImobiliaria.Modelo.Interfaces.Regra
     {
         ImovelViewModel SelecionarImovel(int id);
         void SalvarImovel(ImovelViewModel Imovel);
-        List<ImovelViewModel> ListarImoveis();
+        List<ImovelViewModel> ListarImoveis(string? valorMaximo = null, string? dataPublicacao = null, int? tipoNegocio = null);
         void DesativarImovel(int id);
         void AtivarImovel(int id);
     }

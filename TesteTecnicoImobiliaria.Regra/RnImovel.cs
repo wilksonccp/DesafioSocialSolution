@@ -37,13 +37,34 @@ namespace TesteTecnicoImobiliaria.Regra
             imovelDAL.DesativarImovel(id);
         }
 
-        public List<ImovelViewModel> ListarImoveis()
+        public List<ImovelViewModel> ListarImoveis(string? valorMaximo = null, string? dataPublicacao = null, int? tipoNegocio = null)
         {
-            var retorno = new List<ImovelViewModel>();
-            var Imovels = imovelDAL.ListarImoveis();
-            retorno = mapper.Map<List<ImovelViewModel>>(Imovels);
+            var cultura = CultureInfo.CreateSpecificCulture("pt-BR");
 
-            return retorno;
+            decimal? valorMaximoFiltrado = null;
+            if (!string.IsNullOrWhiteSpace(valorMaximo))
+            {
+                if (!decimal.TryParse(valorMaximo, NumberStyles.Number, cultura, out var valor))
+                {
+                    throw new ArgumentException("Valor maximo invalido.");
+                }
+
+                valorMaximoFiltrado = valor;
+            }
+
+            DateTime? dataPublicacaoFiltrada = null;
+            if (!string.IsNullOrWhiteSpace(dataPublicacao))
+            {
+                if (!DateTime.TryParse(dataPublicacao, cultura, DateTimeStyles.None, out var dataFiltro))
+                {
+                    throw new ArgumentException("Data de publicacao invalida.");
+                }
+
+                dataPublicacaoFiltrada = dataFiltro.Date;
+            }
+
+            var imoveis = imovelDAL.ListarImoveis(valorMaximoFiltrado, dataPublicacaoFiltrada, tipoNegocio);
+            return mapper.Map<List<ImovelViewModel>>(imoveis);
         }
 
         public void SalvarImovel(ImovelViewModel Imovel)

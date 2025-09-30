@@ -1,4 +1,6 @@
-﻿using Dapper;
+﻿using System;
+using System.Linq;
+using Dapper;
 using Dapper.Contrib.Extensions;
 using TesteTecnicoImobiliaria.Modelo.Interfaces;
 using TesteTecnicoImobiliaria.Modelo.Interfaces.DAL;
@@ -49,18 +51,27 @@ namespace TesteTecnicoImobiliaria.DAL
             }
         }
 
-        public List<ImovelModel> ListarImoveis()
+        public List<ImovelModel> ListarImoveis(decimal? valorMaximo = null, DateTime? dataPublicacao = null, int? tipoNegocio = null)
         {
-            List<ImovelModel> imovels = new List<ImovelModel>();
             using (var connection = contexto.CreateConnection())
             {
-                var query = "SELECT I.* FROM IMOVEL AS I " +
-                    " INNER JOIN CLIENTE AS C ON I.CD_CLIENTE = C.CD_CLIENTE" +
-                    " WHERE C.FL_ATIVO = @clienteAtivo";
-                imovels = connection.Query<ImovelModel>(query, new { clienteAtivo = true }).ToList();
-            }
+                const string query = @"SELECT I.*
+                                       FROM IMOVEL AS I
+                                       INNER JOIN CLIENTE AS C ON I.CD_CLIENTE = C.CD_CLIENTE
+                                       WHERE C.FL_ATIVO = 1
+                                         AND (@valorMaximo IS NULL OR I.VL_IMOVEL <= @valorMaximo)
+                                         AND (@dataPublicacao IS NULL OR CAST(I.DT_PUBLICACAO AS DATE) = @dataPublicacao)
+                                         AND (@tipoNegocio IS NULL OR I.CD_TIPO_IMOVEL = @tipoNegocio)";
 
-            return imovels;
+                var parametros = new
+                {
+                    valorMaximo,
+                    dataPublicacao = dataPublicacao?.Date,
+                    tipoNegocio
+                };
+
+                return connection.Query<ImovelModel>(query, parametros).ToList();
+            }
         }
 
         public ImovelModel SelecionarImovel(int id)
