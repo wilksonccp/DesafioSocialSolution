@@ -95,7 +95,7 @@ namespace TesteTecnicoImobiliaria.Regra
                 throw new ArgumentException("Informe o CEP do imovel.");
             }
 
-            var cepLimpo = imovel.Cep.LimparMascara();
+                        var cepLimpo = imovel.Cep.LimparMascara() ?? string.Empty;
 
             if (cepLimpo.Length != 8 || !cepLimpo.All(char.IsDigit))
             {

@@ -1,0 +1,30 @@
+﻿services:
+  mssql:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    container_name: mssql2022
+    environment:
+      - ACCEPT_EULA=Y
+      - MSSQL_SA_PASSWORD=Str0ng!Pass2025
+    ports:
+      - "1433:1433"
+    volumes:
+      - mssql_data:/var/opt/mssql
+    restart: unless-stopped
+
+  api:
+    build:
+      context: .
+      dockerfile: TesteTecnicoImobiliaria.API/Dockerfile
+    container_name: api-imobiliaria
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ConnectionStrings__StringConexao=Server=mssql,1433;Database=TesteTecnicoImobiliaria;User ID=sa;Password=Str0ng!Pass2025;TrustServerCertificate=True
+      - ASPNETCORE_URLS=http://+:8080
+    depends_on:
+      - mssql
+    ports:
+      - "5000:8080"
+    restart: unless-stopped
+
+volumes:
+  mssql_data:

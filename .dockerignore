@@ -1,0 +1,13 @@
+﻿**/bin/
+**/obj/
+*.user
+*.suo
+*.rsuser
+.vs/
+Dockerfile.*
+Dockerfile
+node_modules/
+.sql
+.git
+.gitignore
+

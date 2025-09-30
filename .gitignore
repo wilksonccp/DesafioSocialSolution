@@ -361,3 +361,6 @@ MigrationBackup/
 
 # Fody - auto-generated XML schema
 FodyWeavers.xsd
+# Local configuration for dev environment
+TesteTecnicoImobiliaria.API/appsettings.json
+TesteTecnicoImobiliaria.API/appsettings.Development.json
