@@ -10,5 +10,7 @@ namespace TesteTecnicoImobiliaria.Modelo.Interfaces
         void DesativarCliente(int id);
         void AtivarCliente(int id);
         ClienteModel SelecionarCliente(int id);
+        bool ExisteCpf(string cpf, int? ignorarId = null);
+        bool ExisteCnpj(string cnpj, int? ignorarId = null);
     }
 }

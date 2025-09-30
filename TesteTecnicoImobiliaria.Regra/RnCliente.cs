@@ -60,18 +60,18 @@ namespace TesteTecnicoImobiliaria.Regra
             }
         }
 
-        private static void ValidarDocumento(ClienteViewModel cliente)
+        private void ValidarDocumento(ClienteViewModel cliente)
         {
             if (cliente == null)
             {
                 throw new ArgumentNullException(nameof(cliente));
             }
 
-            var cpf = cliente.CPF.LimparMascara();
-            var cnpj = cliente.CNPJ.LimparMascara();
+            var cpfLimpo = cliente.CPF.LimparMascara();
+            var cnpjLimpo = cliente.CNPJ.LimparMascara();
 
-            var possuiCpf = !string.IsNullOrWhiteSpace(cpf);
-            var possuiCnpj = !string.IsNullOrWhiteSpace(cnpj);
+            var possuiCpf = !string.IsNullOrWhiteSpace(cpfLimpo);
+            var possuiCnpj = !string.IsNullOrWhiteSpace(cnpjLimpo);
 
             if (possuiCpf && possuiCnpj)
             {
@@ -83,14 +83,32 @@ namespace TesteTecnicoImobiliaria.Regra
                 throw new ArgumentException("Informe um CPF ou CNPJ.");
             }
 
-            if (possuiCpf && !cpf.EhCpfValido())
+            var idParaIgnorar = cliente.Id == 0 ? (int?)null : cliente.Id;
+
+            if (possuiCpf)
             {
-                throw new ArgumentException("CPF invalido.");
+                if (!cliente.CPF.EhCpfValido())
+                {
+                    throw new ArgumentException("CPF invalido.");
+                }
+
+                if (cpfLimpo != null && clienteDAL.ExisteCpf(cpfLimpo, idParaIgnorar))
+                {
+                    throw new ArgumentException("CPF ja cadastrado.");
+                }
             }
 
-            if (possuiCnpj && !cnpj.EhCnpjValido())
+            if (possuiCnpj)
             {
-                throw new ArgumentException("CNPJ invalido.");
+                if (!cliente.CNPJ.EhCnpjValido())
+                {
+                    throw new ArgumentException("CNPJ invalido.");
+                }
+
+                if (cnpjLimpo != null && clienteDAL.ExisteCnpj(cnpjLimpo, idParaIgnorar))
+                {
+                    throw new ArgumentException("CNPJ ja cadastrado.");
+                }
             }
         }
     }

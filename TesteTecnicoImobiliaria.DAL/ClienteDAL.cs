@@ -33,6 +33,7 @@ namespace TesteTecnicoImobiliaria.DAL
             {
                 cliente.NR_CPF = null;
             }
+
             using (var connection = contexto.CreateConnection())
             {
                 connection.Insert<ClienteModel>(cliente);
@@ -77,6 +78,36 @@ namespace TesteTecnicoImobiliaria.DAL
             }
 
             return cliente;
+        }
+
+        public bool ExisteCpf(string cpf, int? ignorarId = null)
+        {
+            if (string.IsNullOrWhiteSpace(cpf))
+            {
+                return false;
+            }
+
+            using (var connection = contexto.CreateConnection())
+            {
+                const string query = "SELECT COUNT(1) FROM CLIENTE WHERE NR_CPF = @cpf AND (@ignorarId IS NULL OR CD_CLIENTE <> @ignorarId)";
+                var quantidade = connection.ExecuteScalar<int>(query, new { cpf, ignorarId });
+                return quantidade > 0;
+            }
+        }
+
+        public bool ExisteCnpj(string cnpj, int? ignorarId = null)
+        {
+            if (string.IsNullOrWhiteSpace(cnpj))
+            {
+                return false;
+            }
+
+            using (var connection = contexto.CreateConnection())
+            {
+                const string query = "SELECT COUNT(1) FROM CLIENTE WHERE NR_CNPJ = @cnpj AND (@ignorarId IS NULL OR CD_CLIENTE <> @ignorarId)";
+                var quantidade = connection.ExecuteScalar<int>(query, new { cnpj, ignorarId });
+                return quantidade > 0;
+            }
         }
     }
 }
