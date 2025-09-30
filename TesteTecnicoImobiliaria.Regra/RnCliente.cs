@@ -1,4 +1,5 @@
-﻿using AutoMapper;
+﻿using System;
+using AutoMapper;
 using TesteTecnicoImobiliaria.Modelo.Interfaces;
 using TesteTecnicoImobiliaria.Modelo.Interfaces.Regra;
 using TesteTecnicoImobiliaria.Modelo.Models;
@@ -46,6 +47,8 @@ namespace TesteTecnicoImobiliaria.Regra
 
         public void SalvarCliente(ClienteViewModel cliente)
         {
+            ValidarDocumento(cliente);
+
             ClienteModel clienteModel = mapper.Map<ClienteModel>(cliente);
             if (cliente.Id == 0)
             {
@@ -54,6 +57,40 @@ namespace TesteTecnicoImobiliaria.Regra
             else
             {
                 clienteDAL.AtualizarCliente(clienteModel);
+            }
+        }
+
+        private static void ValidarDocumento(ClienteViewModel cliente)
+        {
+            if (cliente == null)
+            {
+                throw new ArgumentNullException(nameof(cliente));
+            }
+
+            var cpf = cliente.CPF.LimparMascara();
+            var cnpj = cliente.CNPJ.LimparMascara();
+
+            var possuiCpf = !string.IsNullOrWhiteSpace(cpf);
+            var possuiCnpj = !string.IsNullOrWhiteSpace(cnpj);
+
+            if (possuiCpf && possuiCnpj)
+            {
+                throw new ArgumentException("Informe apenas CPF ou CNPJ.");
+            }
+
+            if (!possuiCpf && !possuiCnpj)
+            {
+                throw new ArgumentException("Informe um CPF ou CNPJ.");
+            }
+
+            if (possuiCpf && !cpf.EhCpfValido())
+            {
+                throw new ArgumentException("CPF invalido.");
+            }
+
+            if (possuiCnpj && !cnpj.EhCnpjValido())
+            {
+                throw new ArgumentException("CNPJ invalido.");
             }
         }
     }
