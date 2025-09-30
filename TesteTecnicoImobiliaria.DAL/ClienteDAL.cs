@@ -25,6 +25,14 @@ namespace TesteTecnicoImobiliaria.DAL
 
         public void CadastrarCliente(ClienteModel cliente)
         {
+            if (cliente.NR_CPF != null)
+            {
+                cliente.NR_CNPJ = null;
+            }
+            else if (cliente.NR_CNPJ != null)
+            {
+                cliente.NR_CPF = null;
+            }
             using (var connection = contexto.CreateConnection())
             {
                 connection.Insert<ClienteModel>(cliente);
