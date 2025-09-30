@@ -1,4 +1,6 @@
-﻿using AutoMapper;
+﻿using System;
+using System.Globalization;
+using AutoMapper;
 using TesteTecnicoImobiliaria.Modelo.Interfaces;
 using TesteTecnicoImobiliaria.Modelo.Interfaces.Regra;
 using TesteTecnicoImobiliaria.Modelo.Models;
@@ -46,6 +48,8 @@ namespace TesteTecnicoImobiliaria.Regra
 
         public void SalvarImovel(ImovelViewModel Imovel)
         {
+            ValidarImovel(Imovel);
+
             ImovelModel ImovelModel = mapper.Map<ImovelModel>(Imovel);
             if (Imovel.Id == 0)
             {
@@ -54,6 +58,30 @@ namespace TesteTecnicoImobiliaria.Regra
             else
             {
                 imovelDAL.AtualizarImovel(ImovelModel);
+            }
+        }
+
+        private static void ValidarImovel(ImovelViewModel Imovel)
+        {
+            if (Imovel == null)
+            {
+                throw new ArgumentNullException(nameof(Imovel));
+            }
+
+            if (string.IsNullOrWhiteSpace(Imovel.DataPublicacao))
+            {
+                throw new ArgumentException("Informe a data de publicacao do imovel.");
+            }
+
+            var cultura = CultureInfo.CreateSpecificCulture("pt-BR");
+            if (!DateTime.TryParse(Imovel.DataPublicacao, cultura, DateTimeStyles.None, out var dataPublicacao))
+            {
+                throw new ArgumentException("Data de publicacao invalida.");
+            }
+
+            if (dataPublicacao.Date < DateTime.Today)
+            {
+                throw new ArgumentException("Data de publicacao nao pode ser anterior a hoje.");
             }
         }
     }
